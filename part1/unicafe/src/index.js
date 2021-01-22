@@ -7,11 +7,38 @@ const Button = (props) =>
 </button>;
 
 
-const Display = (props) => (
-  <p>
-  {props.text}  {props.count}
-  </p>
+const Statistic = (props) => (
+  <tr>
+  <td>{props.text}</td>
+  <td>{props.count}</td>
+  </tr>
   )
+
+const percentpos = (g,n,b) => g/(g+n+b) *100;
+
+const average  = (g,n,b) => (g + b*-1)/(g+b+n); 
+
+const Statistics = ({g,n,b}) => {
+  if ((g+n+b) === 0) {
+      return (
+        <>
+        No feedback given
+        </>
+      )
+  }
+  
+  return (
+  <table >
+  <tbody>
+  <Statistic text="good" count = {g} />
+  <Statistic text="neutral" count = {n} />
+  <Statistic text="bad" count = {b} />
+  <Statistic text="all" count = {g+n+b} />
+  <Statistic text="average" count = {average(g,n,b)} />
+  <Statistic text="positive" count = {percentpos(g,n,b)} />
+  </tbody></table>
+)
+}
 
 const App = () => {
   // save clicks of each button to its own state
@@ -27,10 +54,7 @@ const App = () => {
     <Button onClick={() =>setNeutral(neutral+1)} text="neutral" />
     <Button onClick={() =>setBad(bad+1)} text="bad" />
     <h1>statistics</h1>
-    <Display text="good" count= {good} />
-    <Display text="neutral" count= {neutral} />
-    <Display text="bad" count= {bad} />
-
+    <Statistics g={good} n={neutral} b={bad} />
     </>
   );
 };
