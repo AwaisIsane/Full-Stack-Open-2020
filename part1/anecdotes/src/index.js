@@ -4,21 +4,39 @@ import ReactDOM from 'react-dom'
 
 
 const Button = (props) => 
-<button onClick={props.onClick}>
+ (<button onClick={props.onClick}>
   {props.text}
-</button>;
+</button>);
 
-const App = (props) => {
-  const [selected, setSelected] = useState(0)
+const Anecdote = ({ind,points,anecdotes}) => <>
+<p>{anecdotes[ind]}</p>
+has {points[ind]} votes <br/>
+</>
 
-  const rno = Math.floor(Math.random() * (6));
-  console.log("random no is ",rno)
-  return (
+const App = ({anecdotes}) => {
+  const [selected, setSelected] = useState(0);
+  const [points,setPoints] = useState(new Array(6).fill(0));
+  const [mostVtes,setmostVtes] = useState(0);
+
+
+  const rno = () => Math.floor(Math.random() * (anecdotes.length));
+
+  const updatePoints = (ind,points) =>{ 
+    const copy = { ...points};
+    copy[ind]+=1;
+    if (copy[ind]>copy[mostVtes]) {setmostVtes(ind)}                      
+    return copy;}
+                        
+                                      return (
     <div>
-      {props.anecdotes[selected]}
-      <Button text="next anecdote" onClick = {() => setSelected(rno)} />
+      <h1>Anecdote of the day</h1>
+      <Anecdote ind={selected} points ={points} anecdotes={anecdotes}/>
+      <Button text="next anecdote" onClick = {() => setSelected(rno())} />
+      <Button text="vote" onClick = {() => setPoints(updatePoints(selected,points))} />
+      <h1>Anecdote with most Votes</h1>
+      <Anecdote ind={mostVtes} points ={points} anecdotes={anecdotes}/>
     </div>
-  )
+  );
 }
 
 const anecdotes = [
