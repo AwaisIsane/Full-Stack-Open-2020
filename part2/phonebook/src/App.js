@@ -66,6 +66,7 @@ const App = () => {
               searchName = {searchName}
               handleSearch = {handleSearch}
               />
+      <h3>Add a new</h3>
       <PersonForm 
                   addName = {addName} 
                   handleNumberChange = {handleNumberChange}
@@ -73,7 +74,7 @@ const App = () => {
                   newName = {newName}
                   newNo = {newNo}
                   />
-      <h2>Numbers</h2>
+      <h3>Numbers</h3>
       <Persons 
                 personsToShow = {personsToShow} 
                 />
