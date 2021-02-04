@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
-
-
-const Phonebookentry = ({name,no}) => <p>{name} {no}</p>
+import React, { useState } from 'react';
+import Persons from './components/Persons';
+import PersonForm from './components/PersonForm';
+import Filter from "./components/Filter";
 
 const App = () => {
   const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas',
-      number: "040-1234567"}
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) ;
 
   const [ newName, setNewName ] = useState('');
   const [ newNo, setNewNo] = useState("");
+  const [searchName,setSearchName] = useState("");
+  const [searchArr,setSearchArr] = useState([]);
+
 
   const addName = (event) => {
 
@@ -43,22 +48,35 @@ const App = () => {
       setNewNo(event.target.value)
   }
 
+  const handleSearch = (event) => {
+        setSearchName(event.target.value);
+        const reg = new RegExp(event.target.value,'i');
+        setSearchArr(persons.filter(per =>  reg.test(per.name)));
+       
+  }
+  const personsToShow = 
+    searchName === ""
+        ? persons
+        : searchArr;
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-           number: <input value={newNo} onChange={handleNumberChange} /> 
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter 
+              searchName = {searchName}
+              handleSearch = {handleSearch}
+              />
+      <PersonForm 
+                  addName = {addName} 
+                  handleNumberChange = {handleNumberChange}
+                  handleNameChange = {handleNameChange}
+                  newName = {newName}
+                  newNo = {newNo}
+                  />
       <h2>Numbers</h2>
-      {persons.map(person => <Phonebookentry name={person.name} no={person.number} key={person.name}/>)}    
+      <Persons 
+                personsToShow = {personsToShow} 
+                />
 
     </div>
   )
