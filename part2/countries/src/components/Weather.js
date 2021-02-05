@@ -14,11 +14,10 @@ const Weather = ({city}) => {
 
             axios
                 .get(api_call)
-                .then(response => {
-                    setCtyWeather(response.data);
-                    setWthrStaus(true)})
-                 //   .then(response =>
-                  //  setWthrStaus(true))
+                .then(response => 
+                    setCtyWeather(response.data))
+                    .then(response =>
+                    setWthrStaus(true))
                 
                 .catch(err => console.log("error",err));
         

@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from "./components/Filter";
-import axios from 'axios';
+import personService from "./services/Entry";
 
 const App = () => {
   const [ persons, setPersons ] = useState([]);
@@ -13,11 +13,9 @@ const App = () => {
 
 
   useEffect(() => {
-      axios
-        .get('http://localhost:3001/persons')
-        .then(response => setPersons(response.data))
-
-
+      personService
+        .getAll()
+        .then(nwperson => setPersons(nwperson))
   },[]);
 
 
@@ -31,9 +29,13 @@ const App = () => {
 
         if (namethere(persons,newName) === -1){
         const personObj = {name:newName,number:newNo};
-        setPersons(persons.concat(personObj));
-        setNewName("");
-        setNewNo("");
+        personService
+                .create(personObj)
+                .then(rtperson => {
+                  setPersons(persons.concat(rtperson));
+                  setNewName("");
+                  setNewNo("");
+                })
         }
         else {
             window.alert(`${newName} is already added to phonebook`);
@@ -58,12 +60,22 @@ const App = () => {
         setSearchArr(persons.filter(per =>  reg.test(per.name)));
        
   }
+
+  const handleButtonClick = (event) => {
+    const id = event.target.value;
+    if (window.confirm(`Delete ${event.target.name}`)) {
+    personService
+          .remove(id);
+    setPersons(persons.filter((person) => person.id !== Number(id)));
+        }
+      }
+
   const personsToShow = 
     searchName === ""
         ? persons
         : searchArr;
 
-  return (
+        return (
     <div>
       <h2>Phonebook</h2>
       <Filter 
@@ -80,7 +92,8 @@ const App = () => {
                   />
       <h3>Numbers</h3>
       <Persons 
-                personsToShow = {personsToShow} 
+                personsToShow = {personsToShow}
+                handleButtonClick = {handleButtonClick} 
                 />
 
     </div>
