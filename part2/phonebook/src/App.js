@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from "./components/Filter";
-import personService from "./services/Entry";
+import personService from "./services/persons";
 
 const App = () => {
   const [ persons, setPersons ] = useState([]);
@@ -22,12 +22,12 @@ const App = () => {
   const addName = (event) => {
 
         event.preventDefault();
-        const namethere = (persons,newName) => {return (persons.findIndex(
+        const namethere = (persons,newName) => {return (persons.find(
             (ele) => ele.name.toLowerCase()===newName.toLowerCase()));
         }
+        const namethe = namethere(persons,newName);
 
-
-        if (namethere(persons,newName) === -1){
+        if (!namethe){
         const personObj = {name:newName,number:newNo};
         personService
                 .create(personObj)
@@ -37,9 +37,21 @@ const App = () => {
                   setNewNo("");
                 })
         }
+        else if (window.confirm(`${newName} is already added to the phonebook,replace with a new one?`)) {
+          const personObj = {...namethe,number:newNo};
+          
+          personService
+                  .update(personObj,namethe.id)
+                  .then(rtperson => {
+                    setPersons(persons.map(person => person.id !== namethe.id ? person : rtperson));
+                    setNewNo("");
+                    setNewName("");
+                  })
+                  
+        }
         else {
-            window.alert(`${newName} is already added to phonebook`);
             setNewName("");
+            setNewNo("")
         }
 
   }
@@ -99,5 +111,6 @@ const App = () => {
     </div>
   );
 }
+
 
 export default App;
