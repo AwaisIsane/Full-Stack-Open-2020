@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from "./components/Filter";
+import Notification from './components/Notification';
 import personService from "./services/persons";
 
 const App = () => {
@@ -10,6 +11,8 @@ const App = () => {
   const [ newNo, setNewNo] = useState("");
   const [searchName,setSearchName] = useState("");
   const [searchArr,setSearchArr] = useState([]);
+  const [message,setMessage] = useState("");
+  const [messageClass,setMessageClass] = useState("")
 
 
   useEffect(() => {
@@ -17,6 +20,16 @@ const App = () => {
         .getAll()
         .then(nwperson => setPersons(nwperson))
   },[]);
+ 
+
+const stMessage = (message, clss) => {
+  setMessage(message);
+  setMessageClass(clss);
+  setTimeout(() => {
+    setMessage("")
+  }, 5000);
+
+}
 
 
   const addName = (event) => {
@@ -35,6 +48,7 @@ const App = () => {
                   setPersons(persons.concat(rtperson));
                   setNewName("");
                   setNewNo("");
+                  stMessage(`Added ${personObj.name}`,"sucess");
                 })
         }
         else if (window.confirm(`${newName} is already added to the phonebook,replace with a new one?`)) {
@@ -46,7 +60,12 @@ const App = () => {
                     setPersons(persons.map(person => person.id !== namethe.id ? person : rtperson));
                     setNewNo("");
                     setNewName("");
+                    stMessage(`Number Changed of ${personObj.name}`,"sucess");
                   })
+                  .catch(error => {
+                    stMessage(`Information of ${personObj.name} has already been removed from the server`,"error");
+                     setPersons(persons.filter(n=>n.id!==namethe.id));
+                   });
                   
         }
         else {
@@ -75,10 +94,16 @@ const App = () => {
 
   const handleButtonClick = (event) => {
     const id = event.target.value;
-    if (window.confirm(`Delete ${event.target.name}`)) {
+    const name = event.target.name
+    if (window.confirm(`Delete ${name}`)) {
     personService
-          .remove(id);
+          .remove(id)
+          .catch(error => {
+           stMessage(`Information of ${name} has already been removed from the server`,"error");
+            setPersons(persons.filter(n=>n.id!==id));
+          });
     setPersons(persons.filter((person) => person.id !== Number(id)));
+
         }
       }
 
@@ -90,6 +115,10 @@ const App = () => {
         return (
     <div>
       <h2>Phonebook</h2>
+      <Notification 
+              message = {message}
+              clss = {messageClass} 
+              />
       <Filter 
               searchName = {searchName}
               handleSearch = {handleSearch}
