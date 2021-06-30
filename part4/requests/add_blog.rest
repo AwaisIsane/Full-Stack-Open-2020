@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 content-Type: application/json
 
 {
-    "title":"hello worldsss",
+    "title":"kumamaot",
     "author":"umarab",
     "url":"google.com",
     "likes":15
