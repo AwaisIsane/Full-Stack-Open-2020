@@ -21,6 +21,7 @@ test('blogs have  id prop',async () => {
     mongoose.connection.close()
   })
 
+
 test("length increase by 1 i",async () => {
     const iniBlogs = await api.get('/api/blogs')
     
@@ -47,7 +48,7 @@ test("likes property missing defaults 0",async () => {
                   title: "Crypto is gambling",
                   author: "me",
                   url: "https://awaisisane.github.io"
-              }
+              };
   const res = await api.post('/api/blogs')
                        .send(blog)
                        .expect('Content-Type',/application\/json/)
@@ -57,6 +58,7 @@ test("likes property missing defaults 0",async () => {
   expect(res.body.id).toBeDefined()
   expect(res.body.likes).toBe(0)
 })
+
 
 test("if title and url are missing",async () => {
   const blog = {
@@ -69,3 +71,5 @@ const res = await api
                     .expect(400)
 expect()
 })
+
+const 
