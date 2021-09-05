@@ -1,27 +1,49 @@
 const blogsRouter = require("express").Router()
 const Blog = require('../models/blogs')
 
-blogsRouter.get('/', (request, response) => {
-    Blog
-      .find({})
-      .then(blogs => {
-        response.json(blogs)
-      })
+blogsRouter.get('/', async (req, res) => {
+    const result = await Blog
+                        .find({})
+      
+        res.json(result)
+      
   })
   
-  blogsRouter.post('/', (request, response) => {
-    const blobj = 'likes' in request.body ? {...request.body} : {...request.body,"likes":0}
+  blogsRouter.post('/', async (req, res) => {
+    const blobj = 'likes' in req.body ? {...req.body} : {...req.body,"likes":0}
     if (!blobj.title || !blobj.url)
-    return response.status(400).json({ error: 'title or url is missing' })
+    return res.status(400).json({ error: 'title or url is missing' })
 
     const blog = new Blog(blobj)
   
-    blog
-      .save()
-      .then(result => {
-        response.status(201).json(result)
-      })
+    const result = await blog.save()
+    res.status(201).json(result)
+      
       
   })
+  blogsRouter.put("/:id", async (req,res) => {
+    const body = req.body
+
+    const blog = {
+      likes:body.likes
+    }
+
+   const updatedBlog = await  Blog.findByIdAndUpdate(req.params.id , blog,{new:true})
+
+   if (updatedBlog) {
+     res.status(200).json(updatedBlog.toJSON())
+    } else {
+      res.status(404).end()
+    }
+  })
+
+  blogsRouter.delete("/:id", async (req,res,) => {
+
+    const result = await Blog.findByIdAndRemove(req.params.id);
+    
+    res.status(204).end();
+      
+      
+  });
 
   module.exports = blogsRouter
