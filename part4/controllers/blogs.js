@@ -1,23 +1,44 @@
 const blogsRouter = require("express").Router()
+const { request } = require("express")
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blogs')
+const User = require('../models/users')
+
+
+
 
 blogsRouter.get('/', async (req, res) => {
     const result = await Blog
                         .find({})
+                        .populate('user',{username:1,name:1})
       
         res.json(result)
       
   })
   
   blogsRouter.post('/', async (req, res) => {
-    const blobj = 'likes' in req.body ? {...req.body} : {...req.body,"likes":0}
-    if (!blobj.title || !blobj.url)
-    return res.status(400).json({ error: 'title or url is missing' })
+    const {body} = req
 
-    const blog = new Blog(blobj)
+   // const tok = req.token
+    //const decodedtok = jwt.verify(tok,process.env.SECRET)
+    const user = req.user
+    if (!user) {
+      return res.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const blobj = 'likes' in body ? {...body} : {...body,"likes":0}
+    const nblobj = {...blobj,
+                    user:user._id} 
+
+    if (!blobj.title || !blobj.url) {
+    return res.status(400).json({ error: 'title or url is missing' }) }
+    const blog = new Blog(nblobj)
   
     const result = await blog.save()
-    res.status(201).json(result)
+
+    user.blogs = user.blogs.concat(result.id)
+    await user.save()
+    res.status(201).json(result.toJSON())
       
       
   })
@@ -38,12 +59,23 @@ blogsRouter.get('/', async (req, res) => {
   })
 
   blogsRouter.delete("/:id", async (req,res,) => {
-
-    const result = await Blog.findByIdAndRemove(req.params.id);
-    
-    res.status(204).end();
-      
-      
+    //const tok = req.token
+    //const decodedtok = jwt.verify(tok,process.env.SECRET)
+    const user = req.user
+    if (!user) {
+      return res.status(404).json({"error":'token missing or invalid'})
+    }
+    const blog = await Blog.findById(req.params.id);
+    if (blog) {
+      if (blog.user.toString() === user.id) {
+        await Blog.findByIdAndDelete(req.params.id)
+        res.status(204).end()
+      } else {
+        res.status(401).json({error:'blog was not created by this user'})
+      }
+    } else {
+      res.status(404).end()
+    }     
   });
 
   module.exports = blogsRouter

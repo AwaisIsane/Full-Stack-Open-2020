@@ -3,6 +3,7 @@ const app = require('../app')
 const supertest = require('supertest')
 
 const api = supertest(app)
+const token1 = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjEzNzUyMzQzNjRhYTM0OGYzYWU5OWNjIiwiaWF0IjoxNjMxMDE1NDg4fQ.EVQoLyEsWYkK9bfBh_Fucq2LODAJjZcyNICUEq0yQ-I"
 
 
 test('blogs are returned as json', async () => {
@@ -24,7 +25,6 @@ test('blogs have  id prop',async () => {
 
 test("length increase by 1 i",async () => {
     const iniBlogs = await api.get('/api/blogs')
-    
     const blog = {
                     title: "Crypto is the future",
                     author: "Jacck",
@@ -34,6 +34,7 @@ test("length increase by 1 i",async () => {
     await api
             .post('/api/blogs')
             .send(blog)
+            .set('Authorization', token1)
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
@@ -51,6 +52,7 @@ test("likes property missing defaults 0",async () => {
               };
   const res = await api.post('/api/blogs')
                        .send(blog)
+                       .set('Authorization', token1)
                        .expect('Content-Type',/application\/json/)
                     
   
@@ -68,6 +70,21 @@ test("if title and url are missing",async () => {
 const res = await api
                     .post('/api/blogs')
                     .send(blog)
+                    .set('Authorization', token1)
                     .expect(400)
+expect()
+})
+
+test("if token is missing",async () => {
+  const blog = {
+    author: "me",
+    likes:3
+}
+const token2 = "bearer fake token"
+const res = await api
+                    .post('/api/blogs')
+                    .send(blog)
+                   // .set('Authorization', token2)
+                    .expect(401)
 expect()
 })
