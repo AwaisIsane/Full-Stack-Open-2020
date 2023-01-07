@@ -9,8 +9,8 @@ const Login = ({setUser}) => {
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
-        const loggedIn = await loginSrv.login({username,password})
-        console.log(loggedIn)
+        const loggedInResponse = await loginSrv.login({username,password})
+        window.localStorage.setItem('creds', JSON.stringify(loggedInResponse))
         setUser(username)
         }
         catch (exception){
