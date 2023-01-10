@@ -1,18 +1,18 @@
-import  { useEffect} from 'react';
+import  { useEffect } from 'react'
 
 const Notification = ({ message,setMessage,clss,time=5000 }) => {
 
-  useEffect(()=>{
-    if(message!=='') setTimeout(()=>setMessage(''),time)
+  useEffect(() => {
+    if(message!=='') setTimeout(() => setMessage(''),time)
   },[message])
 
-  
 
-  if (message === "" ) {
+
+  if (message === '' ) {
     return null
   }
 
-    
+
   return (
     <div className={clss}>
       {message}
@@ -20,4 +20,4 @@ const Notification = ({ message,setMessage,clss,time=5000 }) => {
   )
 }
 
-  export default Notification;
+export default Notification

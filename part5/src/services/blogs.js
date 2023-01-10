@@ -1,7 +1,7 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
 
-const getToken = () => JSON.parse(localStorage.getItem('creds'));
+const getToken = () => JSON.parse(localStorage.getItem('creds'))
 const getConfig = () => {
   const token = getToken()
   return {
@@ -14,25 +14,25 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const postNew = (blog)=> {
-  const token = getToken();
+const postNew = (blog) => {
+  const token = getToken()
   const config = getConfig()
   const request = axios.post(baseUrl,blog,config)
-  return request.then(response => ({...response.data,user:{id:response.data.user,name:token.name,username:token.username}}))
+  return request.then(response => ({ ...response.data,user:{ id:response.data.user,name:token.name,username:token.username } }))
 }
 
-const likePost = ({id,likes}) => {
-  const config = getConfig();
-  const request = axios.put(`${baseUrl}/${id}`,{likes},config)
-  return request.then(response=>response.data)
+const likePost = ({ id,likes }) => {
+  const config = getConfig()
+  const request = axios.put(`${baseUrl}/${id}`,{ likes },config)
+  return request.then(response => response.data)
 
 }
 
 const deletePost = (id) => {
-  const config = getConfig();
-  const request = axios.delete(`${baseUrl}/${id}`,config) 
-  return request.then(response=>response.data)
+  const config = getConfig()
+  const request = axios.delete(`${baseUrl}/${id}`,config)
+  return request.then(response => response.data)
 }
 
-const blogSrv = {getAll,postNew,likePost,deletePost}
-export default blogSrv;
+const blogSrv = { getAll,postNew,likePost,deletePost }
+export default blogSrv
