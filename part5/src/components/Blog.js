@@ -16,7 +16,7 @@ const Blog = ({ blog,setBlogs,blogs,user }) => {
       blg.sort(sortByLikes)
       setBlogs(blg)}
     catch (exception) {
-      setNMessage(exception.response.data.error)
+      exception.response?setNMessage(exception.response.data.error):setNMessage('something went wrong')
     }
   }
 
@@ -33,17 +33,17 @@ const Blog = ({ blog,setBlogs,blogs,user }) => {
       }}
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
+  // const blogStyle = {
+  //   paddingTop: 10,
+  //   paddingLeft: 2,
+  //   border: 'solid',
+  //   borderWidth: 1,
+  //   marginBottom: 5
+  // }
 
   if(show) {
     return (
-      <div style={blogStyle}>
+      <div className='blog'>
         <div>
           <Notification message={nMessage} setMessage={setNMessage} clss='error'/>
           {blog.title} {blog.author}
@@ -67,7 +67,7 @@ const Blog = ({ blog,setBlogs,blogs,user }) => {
     )
   }
   return (
-    <div style={blogStyle}>
+    <div className='blog'>
       {blog.title} {blog.author}
       <button onClick={toggleShow}>view</button>
     </div>
