@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import blogSrv from '../services/blogs'
-describe('test for blog component',()=> {
+describe('test for blog component',() => {
   test('title author displayed likes/url not displayed by default', () => {
     const blog = {
       title: 'Component testing is done with react-testing-libray',
@@ -13,7 +13,7 @@ describe('test for blog component',()=> {
       url:'google.com',
       username:'testuser',
     }
-    const {container} = render(<Blog blog={blog} />)
+    render(<Blog blog={blog} />)
     const element = screen.queryByText('Component testing is done with react-testing-libray viki')
     const likes =  screen.queryByText('3')
     const url =  screen.queryByText('google.com')
@@ -34,7 +34,7 @@ describe('test for blog component',()=> {
         username:'testuser'
       }
     }
-    const {container} = render(<Blog blog={blog} />)
+    render(<Blog blog={blog} />)
     const button = screen.getByText('view')
     const user = userEvent.setup()
 
@@ -57,7 +57,7 @@ describe('test for blog component',()=> {
         username:'testuser'
       } }
     const mockHandler = jest.spyOn(blogSrv,'likePost')
-    const {container} = render(<Blog blog={blog} />)
+    render(<Blog blog={blog} />)
     const user = userEvent.setup()
 
     const button1 = screen.getByText('view')

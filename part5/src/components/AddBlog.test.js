@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import AddBlog from './AddBlog'
 import blogSrv from '../services/blogs'
-describe('test for add blog component',()=> {
+describe('test for add blog component',() => {
   test('new blog created with right details', async () => {
 
     const newBlog = { title:'hello test',author:'test Uset',url:'google.com' }
