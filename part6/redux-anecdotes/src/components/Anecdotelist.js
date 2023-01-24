@@ -1,4 +1,4 @@
-import {  voteById } from './reducers/anecdoteReducer'
+import {  voteById } from '../reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const Anecdotelist = () => {
