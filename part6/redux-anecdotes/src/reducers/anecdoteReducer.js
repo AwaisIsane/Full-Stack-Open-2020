@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -19,37 +21,55 @@ const asObject = (anecdote) => {
 const compareFunc = (a,b) => a.votes>b.votes?-1:1
 
 const initialState = anecdotesAtStart.map(asObject).sort(compareFunc)
-const reducer = (state = initialState, action) => {
-  switch(action.type) {
-    case 'VOTE_ANECDOTE' :
-      const id = action.data.id
+
+const antecodeSlice = createSlice({
+  name:'antecodes',
+  initialState,
+  reducers:{
+    addAnecdote(state,action) {
+      return state.concat(asObject(action.payload.content))
+    },
+    voteAnecdote(state,action) {
+      const id = action.payload
       return state.map(obj=>
                         obj.id!==id?obj:{...obj,votes:obj.votes+1}).sort(compareFunc)
-    case 'ADD_ANECDOTE' :
-      return state.concat(action.data)
-    default:
-      return state
-
-  }
-
-}
-
-export const voteById = (id) => {
-  return {
-    type: 'VOTE_ANECDOTE',
-    data: { id }
-  }
-}
-
-export const addAnecdote = ({content}) => {
-  return {
-    type: 'ADD_ANECDOTE',
-    data: { 
-      content,
-    id: getId(),
-    votes: 0
     }
   }
-}
+})
+// const anecdoteReducer = (state = initialState, action) => {
+//   switch(action.type) {
+//     case 'VOTE_ANECDOTE' :
+//       const id = action.data.id
+//       return state.map(obj=>
+//                         obj.id!==id?obj:{...obj,votes:obj.votes+1}).sort(compareFunc)
+//     case 'ADD_ANECDOTE' :
+//       return state.concat(action.data)
+//     default:
+//       return state
 
-export default reducer
+//   }
+
+// }
+
+// export const voteById = (id) => {
+//   return {
+//     type: 'VOTE_ANECDOTE',
+//     data: { id }
+//   }
+// }
+
+// export const addAnecdote = ({content}) => {
+//   return {
+//     type: 'ADD_ANECDOTE',
+//     data: { 
+//       content,
+//     id: getId(),
+//     votes: 0
+//     }
+//   }
+// }
+
+// 
+
+export const { addAnecdote, voteAnecdote } = antecodeSlice.actions
+export default antecodeSlice.reducer
