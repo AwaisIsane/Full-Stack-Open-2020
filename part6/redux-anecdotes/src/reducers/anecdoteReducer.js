@@ -36,40 +36,7 @@ const antecodeSlice = createSlice({
     }
   }
 })
-// const anecdoteReducer = (state = initialState, action) => {
-//   switch(action.type) {
-//     case 'VOTE_ANECDOTE' :
-//       const id = action.data.id
-//       return state.map(obj=>
-//                         obj.id!==id?obj:{...obj,votes:obj.votes+1}).sort(compareFunc)
-//     case 'ADD_ANECDOTE' :
-//       return state.concat(action.data)
-//     default:
-//       return state
 
-//   }
-
-// }
-
-// export const voteById = (id) => {
-//   return {
-//     type: 'VOTE_ANECDOTE',
-//     data: { id }
-//   }
-// }
-
-// export const addAnecdote = ({content}) => {
-//   return {
-//     type: 'ADD_ANECDOTE',
-//     data: { 
-//       content,
-//     id: getId(),
-//     votes: 0
-//     }
-//   }
-// }
-
-// 
 
 export const { addAnecdote, voteAnecdote } = antecodeSlice.actions
 export default antecodeSlice.reducer
