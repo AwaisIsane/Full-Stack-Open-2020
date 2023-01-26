@@ -1,42 +1,50 @@
 import { createSlice } from '@reduxjs/toolkit'
+import anecdotesSrv from '../services/antecodes'
 
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-]
 
-const getId = () => (100000 * Math.random()).toFixed(0)
 
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
-const compareFunc = (a,b) => a.votes>b.votes?-1:1
-
-const initialState = anecdotesAtStart.map(asObject).sort(compareFunc)
+const initialState = [] 
 
 const antecodeSlice = createSlice({
   name:'antecodes',
   initialState,
   reducers:{
     addAnecdote(state,action) {
-      return state.concat(asObject(action.payload.content))
+      return state.concat(action.payload)
     },
     voteAnecdote(state,action) {
-      const id = action.payload
+      const id = action.payload.id
+      const votes = action.payload.votes
       return state.map(obj=>
-                        obj.id!==id?obj:{...obj,votes:obj.votes+1}).sort(compareFunc)
+                        obj.id!==id?obj:{...obj,votes:votes})
+    },
+    setAntecodeArray(state,action) {
+      return action.payload
+
     }
   }
 })
 
+export const getAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdotesSrv.getAll()
+    dispatch(setAntecodeArray(anecdotes))
+  }
+}
 
-export const { addAnecdote, voteAnecdote } = antecodeSlice.actions
+export const createAnecdote = anecdote => {
+  return async dispatch => {
+    const newAnecdote = await anecdotesSrv.createNew({anecdote})
+    dispatch(addAnecdote(newAnecdote))
+  }
+}
+
+export const voteAnecdoteReq = anecdote => {
+  return async dispatch => {
+    const retAnecdote = await anecdotesSrv.voteById(anecdote);
+    dispatch(voteAnecdote(retAnecdote))
+  }
+}
+
+export const { addAnecdote, voteAnecdote,setAntecodeArray } = antecodeSlice.actions
 export default antecodeSlice.reducer
