@@ -15,14 +15,23 @@ const notificationSlice = createSlice({
     }
 })
 
+let timeoutId=null
+// export const setNotification = (notifStr,time) => {
+//     return async dispatch => {
+//         dispatch(setNotificationS(notifStr))
 
-export const setNotification = (notifStr,time) => {
+//         await new Promise(resolve => setTimeout(resolve, time *1000));
+
+//        dispatch(clearNotification())
+//     }
+//   }
+  export const setNotification = (notifStr, time) => {
     return async dispatch => {
-        dispatch(setNotificationS(notifStr))
-
-        await new Promise(resolve => setTimeout(resolve, time *1000));
-
-       dispatch(clearNotification())
+      clearTimeout(timeoutId)
+      dispatch(setNotificationS(notifStr))
+      timeoutId = setTimeout(() => {
+        dispatch(clearNotification())
+      }, time * 1000)
     }
   }
 export  const { setNotificationS,clearNotification } = notificationSlice.actions;
