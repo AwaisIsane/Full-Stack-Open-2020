@@ -1,5 +1,5 @@
-const sortByLikes = (a,b) =>  a.likes>b.likes?-1:1
+const sortByLikes = (a, b) => (a.likes > b.likes ? -1 : 1);
 
-const getToken = () => JSON.parse(localStorage.getItem('creds'))
+const getToken = () => JSON.parse(localStorage.getItem("creds"));
 
-export { sortByLikes,getToken }
+export { sortByLikes, getToken };
