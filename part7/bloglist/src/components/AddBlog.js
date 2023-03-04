@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { addBlog } from "../reducers/blogsReducer";
 import { setNotification } from "../reducers/notificationReducer";
-import blogSrv from "../services/blogs";
 
-const AddBlog = ({  setBlogs, blogsa, toggleFrm }) => {
+const AddBlog = ({toggleFrm }) => {
   const [blogForm, setBlogForm] = useState({ title: "", author: "", url: "" });
   const dispatch = useDispatch()
   const addBlogEvent = async (event) => {
     event.preventDefault();
     try {
-      const response = await blogSrv.postNew(blogForm);
+      const response = await dispatch(addBlog(blogForm));
       dispatch(setNotification({
         message: `a new Blog ${response.title} by ${response.author}`,
         class: "success",
       }));
-      setBlogs([...blogsa, response]);
       toggleFrm.current.toggleVisibility();
     } catch (exception) {
       if (exception.response) {

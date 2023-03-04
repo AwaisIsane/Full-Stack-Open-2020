@@ -1,38 +1,31 @@
 import { useState } from "react";
-import blogSrv from "../services/blogs";
-import Notification from "./Notification";
-import { sortByLikes } from "../utils";
+import { useDispatch } from "react-redux";
+import { setNotification } from "../reducers/notificationReducer";
+import { likeBlog, removeBlog } from "../reducers/blogsReducer";
 
-const Blog = ({ blog, setBlogs, blogs, user }) => {
+const Blog = ({ blog, user }) => {
   const [show, setShow] = useState(false);
-  const [nMessage, setNMessage] = useState("");
   const toggleShow = () => setShow(!show);
+  const dispatch = useDispatch();
 
   const likePost = async () => {
     try {
-      const obj = { id: blog.id, likes: blog.likes + 1 };
-      const response = await blogSrv.likePost(obj);
-      const blg = blogs.map((bl) =>
-        bl.id === blog.id ? { ...bl, likes: response.likes } : bl
-      );
-      blg.sort(sortByLikes);
-      setBlogs(blg);
+      const obj = { blogId: blog.id, likes: blog.likes + 1 };
+      dispatch(likeBlog(obj))
     } catch (exception) {
       exception.response
-        ? setNMessage(exception.response.data.error)
-        : setNMessage("something went wrong");
+        ? dispatch(setNotification({message:exception.response.data.error,class:"error"}))
+        : dispatch(setNotification({message:"something went wrong",class:"error"}));
     }
   };
 
-  const removeBlog = async () => {
+  const removeBlogF = async () => {
     if (window.confirm("you want to delete blog")) {
       try {
         // const response = await blogSrv.deletePost(blog.id)
-        await blogSrv.deletePost(blog.id);
-        const blg = blogs.filter((bl) => bl.id !== blog.id);
-        setBlogs(blg);
+        dispatch(removeBlog(blog.id))
       } catch (exception) {
-        setNMessage(exception.response.data.error);
+        dispatch(setNotification({message:exception.response.data.error,class:"error"}));
       }
     }
   };
@@ -49,11 +42,6 @@ const Blog = ({ blog, setBlogs, blogs, user }) => {
     return (
       <div className="blog">
         <div>
-          <Notification
-            message={nMessage}
-            setMessage={setNMessage}
-            clss="error"
-          />
           {blog.title} {blog.author}
           <button onClick={toggleShow}>hide</button>
         </div>
@@ -65,7 +53,7 @@ const Blog = ({ blog, setBlogs, blogs, user }) => {
         <div>{blog.user.name}</div>
         {blog.user.username === user && (
           <div>
-            <button onClick={removeBlog}>remove</button>
+            <button onClick={removeBlogF}>remove</button>
           </div>
         )}
       </div>
