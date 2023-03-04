@@ -1,7 +1,3 @@
-node_modules
-notes.txt
-build
-coverage
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -25,5 +21,4 @@ coverage
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-notes.txt
-/cypress/videos
+.eslintrc.js

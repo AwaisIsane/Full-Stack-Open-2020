@@ -10,10 +10,6 @@ import { sortByLikes } from "./utils";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState("");
-  const [notifMessage, setNotifMessage] = useState({
-    message: "",
-    class: "error",
-  });
   const blogFormRef = useRef();
 
   useEffect(() => {
@@ -37,17 +33,12 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification
-        message={notifMessage.message}
-        setMessage={setNotifMessage}
-        clss={notifMessage.class}
-      />
+      <Notification />
       <h2>
         youre logged in as {user} <button onClick={logoutUser}>Logout</button>
       </h2>
       <Togglable buttonLabel="addBlog" ref={blogFormRef}>
         <AddBlog
-          setNotificationMessage={setNotifMessage}
           setBlogs={setBlogs}
           blogsa={blogs}
           toggleFrm={blogFormRef}

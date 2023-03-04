@@ -1,15 +1,13 @@
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-const Notification = ({ message, setMessage, clss, time = 5000 }) => {
-  useEffect(() => {
-    if (message !== "") setTimeout(() => setMessage(""), time);
-  }, [message]);
+const Notification = () => {
+  const messages = useSelector(state=>state.notification)
 
-  if (message === "") {
+  if (!messages.message) {
     return null;
   }
 
-  return <div className={clss}>{message}</div>;
+  return <div className={messages.class}>{messages.message}</div>;
 };
 
 export default Notification;
