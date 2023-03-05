@@ -8,25 +8,34 @@ const Blog = ({ blog, user }) => {
   const toggleShow = () => setShow(!show);
   const dispatch = useDispatch();
 
-  const likePost = async () => {
-    try {
-      const obj = { blogId: blog.id, likes: blog.likes + 1 };
-      dispatch(likeBlog(obj))
-    } catch (exception) {
+  const likePost = () => {
+    const obj = { blogId: blog.id, likes: blog.likes + 1 };
+    dispatch(likeBlog(obj)).catch((exception) => {
       exception.response
-        ? dispatch(setNotification({message:exception.response.data.error,class:"error"}))
-        : dispatch(setNotification({message:"something went wrong",class:"error"}));
-    }
+        ? dispatch(
+            setNotification({
+              message: exception.response.data.error,
+              class: "error",
+            })
+          )
+        : dispatch(
+            setNotification({ message: "something went wrong", class: "error" })
+          );
+    });
   };
 
-  const removeBlogF = async () => {
+  const removeBlogF = () => {
     if (window.confirm("you want to delete blog")) {
-      try {
-        // const response = await blogSrv.deletePost(blog.id)
-        dispatch(removeBlog(blog.id))
-      } catch (exception) {
-        dispatch(setNotification({message:exception.response.data.error,class:"error"}));
-      }
+      //   try {
+      // const response = await blogSrv.deletePost(blog.id)
+      dispatch(removeBlog(blog.id)).catch((exception) => {
+        dispatch(
+          setNotification({
+            message: exception.response.data.error,
+            class: "error",
+          })
+        );
+      });
     }
   };
 

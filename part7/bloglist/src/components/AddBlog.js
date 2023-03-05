@@ -6,25 +6,26 @@ import { setNotification } from "../reducers/notificationReducer";
 const AddBlog = ({toggleFrm }) => {
   const [blogForm, setBlogForm] = useState({ title: "", author: "", url: "" });
   const dispatch = useDispatch()
-  const addBlogEvent = async (event) => {
+  const addBlogEvent =  (event) => {
     event.preventDefault();
-    try {
-      const response = await dispatch(addBlog(blogForm));
+       dispatch(addBlog(blogForm)).then((response) => {
       dispatch(setNotification({
         message: `a new Blog ${response.title} by ${response.author}`,
         class: "success",
       }));
-      toggleFrm.current.toggleVisibility();
-    } catch (exception) {
-      if (exception.response) {
-        dispatch(setNotification({
-          message: exception.response.data.error,
-          class: "error",
-        }))
-      } else {
-        dispatch(setNotification({ message: "fail", class: "error" }));
-      }
-    }
+      toggleFrm.current.toggleVisibility();})
+      .catch((exception)=> {
+        if (exception.response) {
+          const messg = exception.response.data.error ? exception.response.data.error : "server error"
+          dispatch(setNotification({
+            message: messg,
+            class: "error",
+          }))
+        } else {
+          dispatch(setNotification({ message: "fail", class: "error" }));
+        }
+      });
+    
   };
 
   return (

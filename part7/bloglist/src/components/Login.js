@@ -1,25 +1,30 @@
 import { useState } from "react";
-import loginSrv from "../services/login";
+import { useDispatch } from "react-redux";
+import { setNotification } from "../reducers/notificationReducer";
+import { login } from "../reducers/userReducer";
 import Notification from "./Notification";
 
-const Login = ({ setUser }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const handleLogin = async (event) => {
+
+  const dispatch = useDispatch();
+  const handleLogin =  (event) => {
     event.preventDefault();
-    try {
-      const loggedInResponse = await loginSrv.login({ username, password });
-      window.localStorage.setItem("creds", JSON.stringify(loggedInResponse));
-      setUser(username);
-    } catch (exception) {
-      setError(exception.response.data.error);
-    }
+    //   try {
+    dispatch(login({ username, password })).catch((exception) => {
+      dispatch(
+        setNotification({
+          message: exception.response.data.error,
+          class: "error",
+        })
+      );
+    });
   };
 
   return (
     <div>
-      <Notification message={error} clss={"error"} setMessage={setError} />
+      <Notification />
       <form onSubmit={handleLogin}>
         <div>
           username

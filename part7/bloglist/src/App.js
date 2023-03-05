@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddBlog from "./components/AddBlog";
 import Blog from "./components/Blog";
@@ -6,29 +6,30 @@ import Login from "./components/Login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglabble";
 import { initialzeBlogs } from "./reducers/blogsReducer";
+import { logout, setUser } from "./reducers/userReducer";
+import loginSrv from "./services/login";
 
 const App = () => {
-  const [user, setUser] = useState("");
   const blogFormRef = useRef();
   const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user.username);
   const blogs = useSelector((state) => state.blogs);
 
   useEffect(() => {
-    const creds = JSON.parse(localStorage.getItem("creds"));
-    if (creds) setUser(creds["username"]);
+    const creds = loginSrv.getUserFromStorage();
+    if (creds) dispatch(setUser(creds));
     dispatch(initialzeBlogs());
-    // blogService.getAll().then((blgs) => setBlogs(blgs.sort(sortByLikes)));
   }, []);
 
   const logoutUser = () => {
-    setUser("");
-    localStorage.removeItem("creds");
+    dispatch(logout());
   };
 
-  if (user === "") {
+  if (!user) {
     return (
       <div>
-        <Login setUser={setUser} />
+        <Login  />
       </div>
     );
   }
