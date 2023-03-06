@@ -90,7 +90,7 @@ blogsRouter.get('/', async (req, res) => {
        }
     }
     else {
-      res.status(401).json({error:'comment should at least have 1 character'})}
+      res.status(401).json({error:'no comment in body'})}
   })
 
   module.exports = blogsRouter
