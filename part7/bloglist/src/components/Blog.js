@@ -1,12 +1,15 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
 import { likeBlog, removeBlog } from "../reducers/blogsReducer";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Blog = ({ blog, user }) => {
-  const [show, setShow] = useState(false);
-  const toggleShow = () => setShow(!show);
+const Blog = () => {
   const dispatch = useDispatch();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const blogList = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user.username);
+  const blog = blogList.find((blg) => blg.id === id);
 
   const likePost = () => {
     const obj = { blogId: blog.id, likes: blog.likes + 1 };
@@ -28,14 +31,16 @@ const Blog = ({ blog, user }) => {
     if (window.confirm("you want to delete blog")) {
       //   try {
       // const response = await blogSrv.deletePost(blog.id)
-      dispatch(removeBlog(blog.id)).catch((exception) => {
-        dispatch(
-          setNotification({
-            message: exception.response.data.error,
-            class: "error",
-          })
-        );
-      });
+      dispatch(removeBlog(blog.id))
+        .then(() => navigate("/"))
+        .catch((exception) => {
+          dispatch(
+            setNotification({
+              message: exception.response.data.error,
+              class: "error",
+            })
+          );
+        });
     }
   };
 
@@ -47,31 +52,22 @@ const Blog = ({ blog, user }) => {
   //   marginBottom: 5
   // }
 
-  if (show) {
-    return (
-      <div className="blog">
-        <div>
-          {blog.title} {blog.author}
-          <button onClick={toggleShow}>hide</button>
-        </div>
-        <div>{blog.url}</div>
-        <div>
-          Likes:{blog.likes}
-          <button onClick={likePost}>like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        {blog.user.username === user && (
-          <div>
-            <button onClick={removeBlogF}>remove</button>
-          </div>
-        )}
-      </div>
-    );
-  }
   return (
     <div className="blog">
-      {blog.title} {blog.author}
-      <button onClick={toggleShow}>view</button>
+      <h1>
+        {blog.title} {blog.author}
+      </h1>
+      <div>{blog.url}</div>
+      <div>
+        Likes:{blog.likes}
+        <button onClick={likePost}>like</button>
+      </div>
+      <div>added by {blog.user.name}</div>
+      {blog.user.username === user && (
+        <div>
+          <button onClick={removeBlogF}>remove</button>
+        </div>
+      )}
     </div>
   );
 };

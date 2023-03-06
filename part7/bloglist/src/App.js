@@ -1,38 +1,41 @@
-
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Blog from "./components/Blog";
 import Home from "./components/Home";
 import HomeRootView from "./components/HomeRootView";
+import IndividualUser from "./components/IndividualUser";
 import Login from "./components/Login";
 import UsersView from "./components/UsersView";
 const App = () => {
-  //const user = useSelector((state) => state.user.username);
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Home />,
-      children:[
+      children: [
         {
-          path:"/",
-          element:<HomeRootView />
+          path: "/",
+          element: <HomeRootView />,
         },
         {
-          path: "/users",
+          path: "/users/",
           element: <UsersView />,
         },
-
-      ]
+        {
+          path: "/users/:id",
+          element: <IndividualUser />,
+        },
+        {
+          path:"/blogs/:id",
+          element:<Blog/>
+        }
+      ],
     },
     {
       path: "/login",
       element: <Login />,
-    }
+    },
   ]);
 
-
-  return <RouterProvider router={router}/>
+  return <RouterProvider router={router} />;
 };
 
 export default App;

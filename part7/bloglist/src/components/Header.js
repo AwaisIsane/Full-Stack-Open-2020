@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../reducers/userReducer";
 import Notification from "./Notification";
 
@@ -14,7 +14,10 @@ const Header = () => {
   };
 
   return (
-    <>
+    <><nav>
+        <li><Link to={'/users'}>Users</Link></li>
+        <li><Link to={'/'}>Blogs</Link></li>
+    </nav>
       <h1>Blogs</h1>
       <Notification />
       <h2>
