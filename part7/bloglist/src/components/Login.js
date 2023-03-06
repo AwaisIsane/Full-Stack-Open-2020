@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import {  useNavigate } from "react-router-dom";
 import { setNotification } from "../reducers/notificationReducer";
 import { login } from "../reducers/userReducer";
 import Notification from "./Notification";
@@ -9,10 +10,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const handleLogin =  (event) => {
     event.preventDefault();
-    //   try {
-    dispatch(login({ username, password })).catch((exception) => {
+    dispatch(login({ username, password }))
+    .then(()=>navigate('/'))
+    .catch((exception) => {
       dispatch(
         setNotification({
           message: exception.response.data.error,
