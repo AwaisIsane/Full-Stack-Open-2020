@@ -40,5 +40,10 @@ const deletePost = (id) => {
   return request.then((response) => response.data);
 };
 
-const blogSrv = { getAll, postNew, likePost, deletePost };
+const addComment = ({ id, comment }) => {
+  const request = axios.post(`${baseUrl}/${id}/comments`, { comment });
+  return request.then((response) => response.data);
+};
+
+const blogSrv = { getAll, postNew, likePost, deletePost, addComment };
 export default blogSrv;

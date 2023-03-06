@@ -3,29 +3,36 @@ import { useDispatch } from "react-redux";
 import { addBlog } from "../reducers/blogsReducer";
 import { setNotification } from "../reducers/notificationReducer";
 
-const AddBlog = ({toggleFrm }) => {
+const AddBlog = ({ toggleFrm }) => {
   const [blogForm, setBlogForm] = useState({ title: "", author: "", url: "" });
-  const dispatch = useDispatch()
-  const addBlogEvent =  (event) => {
+  const dispatch = useDispatch();
+  const addBlogEvent = (event) => {
     event.preventDefault();
-       dispatch(addBlog(blogForm)).then((response) => {
-      dispatch(setNotification({
-        message: `a new Blog ${response.title} by ${response.author}`,
-        class: "success",
-      }));
-      toggleFrm.current.toggleVisibility();})
-      .catch((exception)=> {
+    dispatch(addBlog(blogForm))
+      .then((response) => {
+        dispatch(
+          setNotification({
+            message: `a new Blog ${response.title} by ${response.author}`,
+            class: "success",
+          })
+        );
+        toggleFrm.current.toggleVisibility();
+      })
+      .catch((exception) => {
         if (exception.response) {
-          const messg = exception.response.data.error ? exception.response.data.error : "server error"
-          dispatch(setNotification({
-            message: messg,
-            class: "error",
-          }))
+          const messg = exception.response.data.error
+            ? exception.response.data.error
+            : "server error";
+          dispatch(
+            setNotification({
+              message: messg,
+              class: "error",
+            })
+          );
         } else {
           dispatch(setNotification({ message: "fail", class: "error" }));
         }
       });
-    
   };
 
   return (

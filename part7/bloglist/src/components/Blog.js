@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
-import { likeBlog, removeBlog } from "../reducers/blogsReducer";
+import { addComment, likeBlog, removeBlog } from "../reducers/blogsReducer";
 import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,8 @@ const Blog = () => {
   const blogList = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user.username);
   const blog = blogList.find((blg) => blg.id === id);
+
+  const [newComment, setNewComment] = useState("");
 
   const likePost = () => {
     const obj = { blogId: blog.id, likes: blog.likes + 1 };
@@ -44,14 +47,20 @@ const Blog = () => {
     }
   };
 
-  // const blogStyle = {
-  //   paddingTop: 10,
-  //   paddingLeft: 2,
-  //   border: 'solid',
-  //   borderWidth: 1,
-  //   marginBottom: 5
-  // }
-
+  const addCommentEvent = (event) => {
+    event.preventDefault();
+    dispatch(addComment({ id: blog.id, comment:newComment })).catch((exception) => {
+      dispatch(
+        setNotification({
+          message: exception.response.data.error,
+          class: "error",
+        })
+      );
+    });
+  };
+  if(!blog) {
+    return <>Wrong blog id</>;
+  }
   return (
     <div className="blog">
       <h1>
@@ -68,6 +77,29 @@ const Blog = () => {
           <button onClick={removeBlogF}>remove</button>
         </div>
       )}
+      <div>
+        <h2>Comments</h2>
+        <form onSubmit={addCommentEvent}>
+          <div>
+            <input
+              type="text"
+              value={newComment}
+              name="comment"
+              onChange={({ target }) => setNewComment(target.value)}
+            />
+            <button type="submit">add comment</button>
+          </div>
+        </form>
+        {blog.comments.length === 0 ? (
+          <span>no comments</span>
+        ) : (
+          <ul>
+            {blog.comments.map((comment, index) => (
+              <li key={`${index}${comment}`}>{comment}</li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

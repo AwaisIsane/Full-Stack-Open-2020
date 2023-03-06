@@ -27,6 +27,13 @@ const blogsSlice = createSlice({
         )
         .sort(sortByLikes);
     },
+    addCommentSuccess(state, action) {
+      return state.map((bl) =>
+        bl.id === action.payload.id
+          ? { ...bl, comments: action.payload.comments }
+          : bl
+      );
+    },
   },
 });
 
@@ -56,10 +63,22 @@ export const removeBlog = (blogId) => {
 export const likeBlog = ({ blogId, likes }) => {
   return async (dispatch) => {
     const response = await blogSrv.likePost({ id: blogId, likes });
-    dispatch(likeBlogSuccess({ likes: response.likes, id: blogId }));
+    dispatch(likeBlogSuccess({ likes: response.likes, id: response.id }));
   };
 };
 
-export const { setBlogs, addBlogSuccess, removeBlogSuccess, likeBlogSuccess } =
-  blogsSlice.actions;
+export const addComment = ({ id, comment }) => {
+  return async (dispatch) => {
+    const response = await blogSrv.addComment({ id, comment });
+    dispatch(addCommentSuccess(response));
+  };
+};
+
+export const {
+  setBlogs,
+  addBlogSuccess,
+  removeBlogSuccess,
+  likeBlogSuccess,
+  addCommentSuccess,
+} = blogsSlice.actions;
 export default blogsSlice.reducer;
