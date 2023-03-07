@@ -1,3 +1,4 @@
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -11,26 +12,26 @@ const UsersView = () => {
   }, []);
 
   return (
-    <>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>User</TableCell>
+            <TableCell>
               <span>Blogs Created</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {userList.map((user) => (
-            <tr key={user.id}>
-              <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
-              <td>{user.blogs.length}</td>
-            </tr>
+            <TableRow key={user.id}>
+              <TableCell><Link to={`/users/${user.id}`}>{user.name}</Link></TableCell>
+              <TableCell>{user.blogs.length}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

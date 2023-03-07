@@ -3,6 +3,7 @@ import { setNotification } from "../reducers/notificationReducer";
 import { addComment, likeBlog, removeBlog } from "../reducers/blogsReducer";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,9 @@ const Blog = () => {
   const user = useSelector((state) => state.user.username);
   const blog = blogList.find((blg) => blg.id === id);
 
+
   const [newComment, setNewComment] = useState("");
+  const [showD,setShowD] = useState(false)
 
   const likePost = () => {
     const obj = { blogId: blog.id, likes: blog.likes + 1 };
@@ -31,9 +34,6 @@ const Blog = () => {
   };
 
   const removeBlogF = () => {
-    if (window.confirm("you want to delete blog")) {
-      //   try {
-      // const response = await blogSrv.deletePost(blog.id)
       dispatch(removeBlog(blog.id))
         .then(() => navigate("/"))
         .catch((exception) => {
@@ -44,7 +44,6 @@ const Blog = () => {
             })
           );
         });
-    }
   };
 
   const addCommentEvent = (event) => {
@@ -58,6 +57,10 @@ const Blog = () => {
       );
     });
   };
+
+  const handleDialogClose = () => setShowD(false)
+  const openDialog = () => setShowD(true)
+
   if(!blog) {
     return <>Wrong blog id</>;
   }
@@ -69,25 +72,26 @@ const Blog = () => {
       <div>{blog.url}</div>
       <div>
         Likes:{blog.likes}
-        <button onClick={likePost}>like</button>
+        <Button variant="contained" onClick={likePost}>like</Button>
       </div>
       <div>added by {blog.user.name}</div>
       {blog.user.username === user && (
         <div>
-          <button onClick={removeBlogF}>remove</button>
+          <Button variant="contained" onClick={openDialog}>Remove Blog</Button>
         </div>
       )}
       <div>
         <h2>Comments</h2>
         <form onSubmit={addCommentEvent}>
           <div>
-            <input
+            <TextField
+              variant="outlined"  
               type="text"
               value={newComment}
               name="comment"
               onChange={({ target }) => setNewComment(target.value)}
             />
-            <button type="submit">add comment</button>
+            <Button variant="contained"  type="submit">add comment</Button>
           </div>
         </form>
         {blog.comments.length === 0 ? (
@@ -100,6 +104,27 @@ const Blog = () => {
           </ul>
         )}
       </div>
+      <Dialog
+        open={showD}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete Blog Post"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            this woll delete blog post along with all comments this action is irreversible
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Disagree</Button>
+          <Button onClick={removeBlogF} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

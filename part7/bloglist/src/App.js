@@ -1,3 +1,4 @@
+import { Container } from "@mui/material";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Blog from "./components/Blog";
 import Home from "./components/Home";
@@ -35,7 +36,7 @@ const App = () => {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (<Container><RouterProvider router={router} /></Container>);
 };
 
 export default App;

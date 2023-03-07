@@ -1,3 +1,4 @@
+import { Button, Container, TextField } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {  useNavigate } from "react-router-dom";
@@ -26,12 +27,13 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <Container>
       <Notification />
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <TextField
+            variant="outlined"
+            label="username"
             type="text"
             value={username}
             name="Username"
@@ -39,17 +41,18 @@ const Login = () => {
           />
         </div>
         <div>
-          password
-          <input
+          <TextField
+            variant="outlined"
+            label="password"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <Button variant="contained" type="submit">login</Button>
       </form>
-    </div>
+    </Container>
   );
 };
 

@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addBlog } from "../reducers/blogsReducer";
@@ -71,7 +72,7 @@ const AddBlog = ({ toggleFrm }) => {
             }
           />
         </div>
-        <button type="submit">create</button>
+        <Button variant="contained" type="submit">create</Button>
       </form>
     </div>
   );
