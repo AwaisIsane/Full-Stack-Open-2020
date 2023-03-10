@@ -1,5 +1,6 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+const { v1: uuid } = require("uuid");
 
 let authors = [
   {
@@ -97,7 +98,8 @@ let books = [
   you can remove the placeholder query once your first own has been implemented 
 */
 
-const typeDefs = `
+const typeDefs = `#graphql
+
   type Author {
     name: String!
     id: ID!
@@ -109,8 +111,8 @@ const typeDefs = `
     title: String!
     published: Int!
     author: String!
-    id: String!
-    genres: [String]
+    id: ID!
+    genres: [String!]
   }
 
   type Query {
@@ -118,6 +120,21 @@ const typeDefs = `
     authorCount :Int!
     allBooks(author:String,genre:String) : [Book!]!
     allAuthors : [Author]
+  }
+
+  type Mutation {
+    addBook (
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]
+
+    ):Book
+
+    editAuthor (
+      name: String!
+      setBornTo: Int!
+    ):Author
   }
 `;
 
@@ -137,6 +154,26 @@ const resolvers = {
   Author: {
     bookCount: (root) =>
       books.filter((book) => book.author === root.name).length,
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuid() };
+      books = books.concat(book);
+      if (authors.filter(author=>author.name===book.author).length<1){
+        const author = {name:book.author,id:uuid()}
+        authors = authors.concat(author);
+      }
+      return book
+    },
+    editAuthor: (root,args) => {
+      let   author = authors.filter(author=>author.name===args.name)[0]
+      if (author){  
+        author = {...author,born:args.setBornTo}
+        authors = authors.map(authorT=>authorT.name===args.name?{...authorT,born:args.setBornTo}:authorT)
+        return author
+      }
+      return null
+    }
   },
 };
 
