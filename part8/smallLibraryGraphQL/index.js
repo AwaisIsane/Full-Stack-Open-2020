@@ -1,6 +1,7 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { v1: uuid } = require("uuid");
+const { GraphQLError } = require('graphql')
 
 let authors = [
   {
@@ -157,23 +158,44 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
+      if (books.find((b) => b.title === args.title)) {
+        throw new GraphQLError("Title must be unique", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.title,
+          },
+        });
+      }
+
+      if (args.title == "" || args.name == "") {
+        throw new GraphQLError("title and name must not be empty", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.title,
+          },
+        });
+      }
       const book = { ...args, id: uuid() };
       books = books.concat(book);
-      if (authors.filter(author=>author.name===book.author).length<1){
-        const author = {name:book.author,id:uuid()}
+      if (authors.filter((author) => author.name === book.author).length < 1) {
+        const author = { name: book.author, id: uuid() };
         authors = authors.concat(author);
       }
-      return book
+      return book;
     },
-    editAuthor: (root,args) => {
-      let   author = authors.filter(author=>author.name===args.name)[0]
-      if (author){  
-        author = {...author,born:args.setBornTo}
-        authors = authors.map(authorT=>authorT.name===args.name?{...authorT,born:args.setBornTo}:authorT)
-        return author
+    editAuthor: (root, args) => {
+      let author = authors.filter((author) => author.name === args.name)[0];
+      if (author) {
+        author = { ...author, born: args.setBornTo };
+        authors = authors.map((authorT) =>
+          authorT.name === args.name
+            ? { ...authorT, born: args.setBornTo }
+            : authorT
+        );
+        return author;
       }
-      return null
-    }
+      return null;
+    },
   },
 };
 
