@@ -2,11 +2,12 @@ const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { GraphQLError } = require("graphql");
 const { mongoose } = require("mongoose");
-const author = require("./models/author");
 require("dotenv").config();
 mongoose.set("strictQuery", false);
 const Author = require("./models/author");
+const jwt = require('jsonwebtoken')
 const Book = require("./models/book");
+const User = require("./models/user");
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -43,6 +44,17 @@ const addAuthor = async (args) =>  {
 
 const typeDefs = `#graphql
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
+
   type Author {
     name: String!
     id: ID!
@@ -62,6 +74,7 @@ const typeDefs = `#graphql
     authorCount :Int!
     allBooks(author:String,genre:String) : [Book!]!
     allAuthors : [Author]
+    me: User
   }
 
   type Mutation {
@@ -77,6 +90,15 @@ const typeDefs = `#graphql
       name: String!
       setBornTo: Int!
     ):Author
+
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `;
 
@@ -135,6 +157,36 @@ const resolvers = {
         return author.save();
       }
       return null;
+    },
+    createUser: async (root, args) => {
+      const user = new User({ username: args.username,favoriteGenre:args.favoriteGenre })
+  
+      return user.save()
+        .catch(error => {
+          throw new GraphQLError('Creating the user failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              error
+            }
+          })
+        })
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+  
+      if ( !user || args.password !== 'secret' ) {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })        
+      }
+  
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      }
+      return { value: jwt.sign(userForToken, process.env.SECRET) }
     },
   },
 };
