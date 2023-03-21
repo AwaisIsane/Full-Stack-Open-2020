@@ -1,11 +1,16 @@
 import { useQuery } from "@apollo/client";
-import { useState } from "react";
-import {  ALL_BOOKS_BY_GENRE } from "../queries";
+import { useEffect, useState } from "react";
+import {  ALL_BOOKS_BY_GENRE, MY_DETAILS } from "../queries";
 
-const Books = (props) => {
-  const [genre, setGenre] = useState("children");
-  const books = useQuery(ALL_BOOKS_BY_GENRE, { variables: { genre: genre } });
-  const genres = ["economics","fantasy","children","adventure","romance","sports"];
+const Recommendation = (props) => {
+  const [genre, setGenre] = useState(null);
+  const books = useQuery(ALL_BOOKS_BY_GENRE, { variables: {  genre } ,skip:!genre},);
+  const me = useQuery(MY_DETAILS)
+  useEffect(()=>{
+    if(me.data) {
+      setGenre(me.data.me.favoriteGenre)}
+
+  },[me.data])
   if (!props.show) {
     return null;
   }
@@ -32,9 +37,8 @@ const Books = (props) => {
           )):<tr><td colSpan={3}>no books to show</td></tr>}
         </tbody>
       </table>
-      {genres.map((g)=><button key={g} onClick={()=>setGenre(g)}>{g}</button>)}
     </div>
   );
 };
 
-export default Books;
+export default Recommendation;
