@@ -17,6 +17,7 @@ const { makeExecutableSchema } = require("@graphql-tools/schema");
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
+const loaders = require('./loaders')
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -30,6 +31,8 @@ mongoose
   .catch((error) => {
     console.log("error connection to MongoDB:", error.message);
   });
+
+  mongoose.set('debug',true)
 
 // const server = new ApolloServer({
 //   typeDefs,
@@ -80,7 +83,7 @@ const start = async () => {
             process.env.SECRET
           );
           const currentUser = await User.findById(decodedToken.id);
-          return { currentUser };
+          return { currentUser,loaders };
         }
       },
     })

@@ -49,12 +49,15 @@ const resolvers = {
         return Book.find({ genres: args.genre }).populate("author");
       return Book.find({}).populate("author");
     },
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => {
+      return Author.find({})},
   },
-  // Author: {
-  //   bookCount: async (root) =>
-  //   Book.collection.countDocuments(),
-  // },
+  Author: {
+    bookCount: async (root,args,context) =>{
+   return context.loaders.bookCountLoader.load(root._id)
+  
+  },
+  },
   Mutation: {
     addBook: async (root, args, context) => {
       checkLogin(context.currentUser);

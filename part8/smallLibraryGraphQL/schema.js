@@ -15,6 +15,7 @@ const typeDefs = `#graphql
     name: String!
     id: ID!
     born: Int
+    bookCount:Int
   }
 
   type Book {
