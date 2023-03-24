@@ -14,14 +14,22 @@ export const BOOK_DETAILS = gql`
     }
 `;
 
+export const AUTHOR_DETAILS = gql`
+      fragment AuthorDetails on Author {
+        name
+        id
+        born
+        bookCount
+      }
+`
+
 export const ALL_AUTHORS = gql`
   query {
     allAuthors {
-      name
-      id
-      born
+      ...AuthorDetails
     }
   }
+  ${AUTHOR_DETAILS}
 `;
 
 export const ALL_BOOKS = gql`
@@ -55,10 +63,10 @@ export const CREATE_BOOK = gql`
 export const UPDATE_YEAR = gql`
   mutation updateYear($name: String!, $setBornTo: Int!) {
     editAuthor(name: $name, setBornTo: $setBornTo) {
-      name
-      born
+     ...AuthorDetails
     }
   }
+  ${AUTHOR_DETAILS}
 `;
 
 export const LOGIN = gql`
