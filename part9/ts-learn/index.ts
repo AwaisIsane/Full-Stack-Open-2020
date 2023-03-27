@@ -23,14 +23,13 @@ app.get("/bmi", (req, res) => {
 app.post("/exercises", (req, res) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const body = req.body;
-  console.log(body)
+  console.log(body);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   if (!(body.daily_exercises && body.target)) {
     res.status(400).json({ error: "malformatted parameters" });
-  }
-  else {
+  } else {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    res.status(200).json(calculateExercises(body.daily_exercises,body.target));
+    res.status(200).json(calculateExercises(body.daily_exercises, body.target));
   }
 });
 const PORT = 3003;
