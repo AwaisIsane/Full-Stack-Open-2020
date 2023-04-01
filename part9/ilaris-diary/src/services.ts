@@ -1,5 +1,5 @@
 import axios from "axios"
-import { NewDiaryEntry, NonSensitiveDiaryEntry } from "./types"
+import { DiaryEntry, NewDiaryEntry, NonSensitiveDiaryEntry } from "./types"
 
 const BACKEND_URL_DIARIES = 'http://localhost:3000/api/diaries'
 export const getDiary = async () => {
@@ -8,6 +8,6 @@ export const getDiary = async () => {
 }
 
 export const createDiaryEntry = async (entry:NewDiaryEntry) => {
-                const response = await axios.post<NewDiaryEntry>(BACKEND_URL_DIARIES,entry)
+                const response = await axios.post<DiaryEntry>(BACKEND_URL_DIARIES,entry)
                 return response.data
 }
