@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NonSensitiveDiaryEntry, Visibility, Weather } from "../types";
 import { createDiaryEntry } from "../services";
 import { parseVisibility, parseWeather } from "../utils";
-import { AxiosError } from "axios";
+import { AxiosError, isAxiosError } from "axios";
 
 const AddEntry = ({addDiaryf,setError}:{addDiaryf:(entry:NonSensitiveDiaryEntry)=>void,setError:(err:string)=>void}) => {
   const [date, setDate] = useState("");
@@ -18,9 +18,16 @@ const AddEntry = ({addDiaryf,setError}:{addDiaryf:(entry:NonSensitiveDiaryEntry)
     addDiaryf({ date, weather, visibility,id:response.id })
     }
     catch (e) {
+      if(isAxiosError(e)){
         const error = e as AxiosError
         console.log(error)
+        if(typeof error.response?.data === 'string'){
+          setError(error.response.data)
+        }
+        else {
         setError(error.message)
+        }
+      }
     }
   };
   const weatherA: Weather[] = [
