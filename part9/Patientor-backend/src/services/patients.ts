@@ -1,5 +1,5 @@
 import data from "../../data/patients";
-import { NewEntry, NewPatient, NonSensitivePatient, Patient } from "../types";
+import { NewEntry, NewPatient, NonSensitivePatient, Patient,Entry } from "../types";
 import { v4 as uuid } from "uuid";
 
 let patients: Patient[] = data;
@@ -23,13 +23,13 @@ const addPatient = (patient: NewPatient): Patient => {
   return pt;
 };
 
-const addEntry = (id: string, entry: NewEntry): NewEntry => {
+const addEntry = (id: string, entry: NewEntry): Entry => {
   const ent = { ...entry, id: uuid() };
   // patients.forEach((p) => {
   //   if (p.id === id) p.entries.push(ent);
   // });
   patients = patients.map((p) =>
-    p.id === id ? { ...p, entries: { ...p.entries, entry } } : p
+    p.id === id ? { ...p, entries:p.entries.concat(ent)   }: p
   );
   return ent;
 };

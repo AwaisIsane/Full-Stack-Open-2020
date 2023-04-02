@@ -54,7 +54,7 @@ const parseGender = (gender: unknown): Gender => {
 };
 
 const parseHealthRating = (rating: unknown): HealthCheckRating => {
-  if (!rating || !isNumber(rating) || !isHealthRating(rating)) {
+  if ( !isNumber(rating) || !isHealthRating(rating)) {
     throw new Error("Incorrect or missing Gender: " + rating);
   }
   return rating;
