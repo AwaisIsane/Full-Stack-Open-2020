@@ -1,13 +1,13 @@
 import data from "../../data/patients";
-import { NewPatient, Patient } from "../types";
+import { NewEntry, NewPatient, NonSensitivePatient, Patient } from "../types";
 import { v4 as uuid } from "uuid";
 
-const patients: Patient[] = data;
+let patients: Patient[] = data;
 const getEntries = (): Patient[] => {
   return patients;
 };
 
-const getNonSenseEntries = (): Omit<Patient, "ssn">[] => {
+const getNonSenseEntries = (): NonSensitivePatient[] => {
   return patients.map((dat) => ({
     id: dat.id,
     name: dat.name,
@@ -23,4 +23,25 @@ const addPatient = (patient: NewPatient): Patient => {
   return pt;
 };
 
-export default { addPatient, getNonSenseEntries, getEntries };
+const addEntry = (id: string, entry: NewEntry): NewEntry => {
+  const ent = { ...entry, id: uuid() };
+  // patients.forEach((p) => {
+  //   if (p.id === id) p.entries.push(ent);
+  // });
+  patients = patients.map((p) =>
+    p.id === id ? { ...p, entries: { ...p.entries, entry } } : p
+  );
+  return ent;
+};
+
+const getPatientByid = (id: string): Patient => {
+  return patients.filter((p) => p.id === id)[0];
+};
+
+export default {
+  addPatient,
+  getNonSenseEntries,
+  getEntries,
+  getPatientByid,
+  addEntry,
+};
